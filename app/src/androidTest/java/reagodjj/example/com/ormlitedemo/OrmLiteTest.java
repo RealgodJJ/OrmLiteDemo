@@ -4,11 +4,14 @@ import android.test.InstrumentationTestCase;
 import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Callable;
 
 import reagodjj.example.com.ormlitedemo.database.DatabaseHelper;
 import reagodjj.example.com.ormlitedemo.entity.School;
@@ -67,6 +70,8 @@ public class OrmLiteTest extends InstrumentationTestCase {
         for (Student student : studentList) {
             Log.i("RealgodJJ", student.toString());
         }
+
+//        studentDao.queryRaw("select from student_tb where name = ?", "MaAonan");
     }
 
     public void testUpdate() throws SQLException {
@@ -85,5 +90,30 @@ public class OrmLiteTest extends InstrumentationTestCase {
         deleteBuilder.setWhere(deleteBuilder.where().eq("name", "Xiaomage")
                 .and().eq("age", 23));
         deleteBuilder.delete();
+    }
+
+    public void testTransaction() {
+        try {
+            TransactionManager.callInTransaction(
+                    getDatabaseHelper().getConnectionSource(),
+                    new Callable<Void>() {
+                        @Override
+                        public Void call() throws Exception {
+                            Student student = new Student("trans test", new Random().nextInt(20),
+                                    "...", new School("Fuck", "Dick"));
+                            Dao<Student, Integer> studentDao = getStudentDao();
+                            for (int i = 0; i < 5; i++) {
+                                studentDao.create(student);
+//                                if (i == 2) {
+//                                    throw new SQLException("test.....");
+//                                }
+                            }
+                            return null;
+                        }
+                    }
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
