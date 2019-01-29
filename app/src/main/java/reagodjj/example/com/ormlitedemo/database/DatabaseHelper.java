@@ -9,6 +9,7 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
+import reagodjj.example.com.ormlitedemo.entity.School;
 import reagodjj.example.com.ormlitedemo.entity.Student;
 
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
@@ -16,7 +17,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DB_NAME = "test.db";
 
     private DatabaseHelper(Context context) {
-        super(context, DB_NAME, null, 1);
+        super(context, DB_NAME, null, 2);
     }
 
     public static synchronized DatabaseHelper getInstance(Context context) {
@@ -30,6 +31,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             TableUtils.createTable(connectionSource, Student.class);
+            TableUtils.createTable(connectionSource, School.class);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -39,6 +42,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             TableUtils.dropTable(connectionSource, Student.class, true);
+            TableUtils.dropTable(connectionSource, School.class, true);
+            onCreate(database, connectionSource);
         } catch (SQLException e) {
             e.printStackTrace();
         }

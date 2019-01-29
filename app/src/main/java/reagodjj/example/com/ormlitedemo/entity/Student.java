@@ -14,11 +14,14 @@ public class Student {
     private int age;
     @DatabaseField
     private String phone;
+    @DatabaseField(columnName = "school_id", foreign = true, canBeNull = false, foreignAutoRefresh = true)
+    private School school;
 
-    public Student(String name, int age, String phone) {
+    public Student(String name, int age, String phone, School school) {
         this.name = name;
         this.age = age;
         this.phone = phone;
+        this.school = school;
     }
 
     public Student() {
@@ -54,6 +57,14 @@ public class Student {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public School getSchool() {
+        return school;
+    }
+
+    public void setSchool(School school) {
+        this.school = school;
     }
 
     @Override
